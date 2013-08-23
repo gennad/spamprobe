@@ -1,0 +1,1469 @@
+2006-11-16  Brian Burton  <brian@burton-computer.com>
+
+	* Released as 1.4d
+
+	* configure.ac: Added ability to selectively disable image
+	  processing using --without-gif, --without-jpeg, and/or
+	  --without-png.
+
+	* src/spamprobe/spamprobe.cc (set_headers): Added ability to
+	  selectively ignore individual headers using -H-headername.
+
+	* src/includes/Ptr,Ref,Array.h: Restored missing <cassert> include.
+
+	* src/parser/PngParser.cc (tokenizeImage): added basic tokens from
+	  PNG images.
+
+2006-11-16  Brian Burton  <brian@localhost.localdomain>
+
+	* src/parser/PngParser.cc (PngParser): Stub for PNG parsing using
+	  libpng.
+
+	* src/parser/JpegParser.cc (tokenizeMarker): Preliminary
+	  implementation of jpeg parsing using jpeglib.
+
+	* configure.ac: Auto detect of either libungig or libgif depending
+	  on which one is available.
+
+2007-01-04  Brian Burton  <brian@burton-computer.com>
+
+	* Released as 1.4c
+
+	* spamprobe.1: Modified man page to remove unnecessary informaton
+	  and make it more conformant with man page conventions.
+
+	* src/spamprobe/spamprobe.cc (process_extended_options): added
+	  ignore-body option.
+
+	* src/parser/HeaderPrefixList.cc (HeaderPrefixList::addHeaderPrefix):
+	  Forced header prefixes and names to lower case instead of
+	  relying on an assert to enforce the restriction.
+
+	* src/database/FrequencyDBImpl_hash.cc (hash::FrequencyDBImpl_hash): 
+	  Disabled experimental hash database auto-cleaning.
+
+	* src/includes/Ref.h: Removed cassert include.
+
+	* src/spamprobe/spamprobe.cc (process_extended_options): Added
+	  whitelist option to allow use of SP as a bayesian white list in
+	  conjunction with other filters.
+
+2006-02-17  Brian Burton  <brian@burton-computer.com>
+
+	* Released as 1.4b
+
+	* src/parser/TraditionalMailMessageParser.cc (parseBody): Fixed
+	  bug reported by Jphn Chandler that prevented tokens from being
+	  extracted from headers of messages with no body.
+
+	* src/input/SimpleMultiLineStringCharReader.cc (class
+	  SimpleMultiLineStringCharReaderPosition): Fixed crash bug
+	  reported by David Rosen when a missing base64 encoded body was
+	  parsed.
+
+2006-01-30  Brian Burton  <brian@burton-computer.com>
+
+	* Released as 1.4a
+
+2006-01-28  Brian Burton  <brian@burton-computer.com>
+
+	* src/includes/LRUCache.h (LRUCache): Reimplemented using STL list
+	  class.  Map uses Node ptr as key to avoid having two copies of
+	  the key in memory.  Changed iterators to use STL style syntax.
+
+	* src/parser/PhrasingTokenizer.cc (compactChars): Improved
+	  efficiency.
+
+2006-01-25  Brian Burton  <brian@burton-computer.com>
+
+	* src/parser/MimeDecoder.cc (next_char64): Fixed potential array
+	  bounds overflow bug in base64 decoding.  Thanks to Chris Ross
+	  for the bug report.
+
+        * src/spamprobe.cc: (and various other files) Added
+	  min_phrase_chars option that causes parser to keep adding tokens
+	  for phrases until they are at least min_phrase_chars long
+	  instead of stopping at phrase word limit.  This might be useful
+	  for catching "v i a g r a" as a single term.  So far though
+	  experiments with using this option are not very promising.
+	
+	* src/spamprobe/Command_auto_train.cc (execute): Added LOG
+	  sub-command to log each processed message to stdout along with
+	  whether or not it had been scored successfully prior to
+	  training.  This is useful for experiments to determine how fast
+	  SP can learn.
+
+	* src/spamprobe/Command_receive.cc (createScoreCommand): Fixed
+	  documentation bug and improved online help for score command.
+	  Thanks to Chris Ross for the bug report.
+
+2006-01-03  Brian Burton  <brian@burton-computer.com>
+
+	* src/parser/MailMessage.cc (MailMessage): Removed redundant
+	  bounds check.
+
+	* src/utility/MultiLineString.cc (line): Added bounds check.
+
+	* src/parser/HtmlTokenizer.cc (tokenize): Added TempPtr to ensure
+	  reader and receiver are cleared between runs.
+
+	* src/utility/MultiLineSubString.cc (m_target): Fixed boundary
+	  conditions if passed in indexes are outside bounds of target.
+
+2005-12-28  Brian Burton  <brian@burton-computer.com>
+
+        * Released as 1.4.
+
+	* src/includes/LRUPtrCache.h (LRUPtrCache): Fixed clear() bug that
+	  caused -P command line option to crash on some architectures due
+	  to an invalid delete.
+
+	* src/database/FrequencyDBImpl_bdb.cc (openDatabase): Fixed
+	  relative path database opening bug in CDB mode.  (Thanks to
+	  Nicolas Duboc for report and suggested fix).
+
+	* src/spamprobe/AbstractCommand.cc (openDatabase): All non-read
+	  only commands will now create the database directory if it's
+	  missing when they open the database for the first time and
+	  the -c option was specified on the command line.
+
+	* src/database/HashDataFile.cc (close): Replaced clear() with
+	  erase().
+
+	* src/spamprobe/Command_help.cc (printCommandLineOptions): Added
+	  comprehensive command line option help.
+
+	* src/input/IstreamCharReader.cc (forward): Now uses rdbuf
+	  directly when reading characters and seeking to eliminate extra
+	  overhead of istream class.
+
+	* src/spamprobe/spamprobe.cc (main): -V option now returns exit
+	  code 0 instead of 1.
+
+2005-12-25  Brian Burton  <brian@burton-computer.com>
+
+	* src/database/FrequencyDBImpl_cache.cc (writeWord): Modified
+	  database cache to keep modified/unmodified terms within cache
+	  size limit.
+	  (flush): number of records written to disk per transaction
+	  limited to avoid problem with PBL using excessive amounts of
+	  memory to write a large cache to disk if the database is large.
+
+2005-12-23  Brian Burton  <brian@burton-computer.com>
+
+	* src/database/DatabaseConfig.cc (createDatabaseImpl): Restored
+	  use of database cache.
+
+2005-12-21  Brian Burton  <brian@burton-computer.com>
+
+	* src/includes/Ref.h (T>): Eliminated RefObject base class.
+
+2005-12-18  Brian Burton  <brian@burton-computer.com>
+
+	* src/utility/util.cc (to_7bits): Removed use of string::+=
+
+	* src/input/LineReader.cc (forward): Removed use of string::+=
+
+	* src/utility/MultiLineString.cc (parseText): Fixed bug that
+	  caused each succeeding line in decoded text to contain all prior
+	  lines as well.  Thanks to Nico for catching that one.
+	  (parseText): More efficient algorithm for breaking string into
+	  multiple lines without use of string::+=
+
+	* src/input/SimpleMultiLineStringCharReader.cc (class
+	  SimpleMultiLineStringCharReaderPosition): Refactored code into
+	  position object.
+	  (ensureCharReady): Cached calls to m_target->line() based on
+	  profiler results showing they were consuming too much time
+	  during parsing.
+
+2005-12-17  Brian Burton  <brian@burton-computer.com>
+
+	* src/parser/HtmlTokenizer.cc (processTagBody): Restored support
+	  for -o suspicious-tags option.
+
+	* src/parser/HtmlTokenizer.cc (processTagBody): Added tag specific
+	  prefixes when parsing HTML tags.  Left in the old prefix (U_)
+	  even though it collides with url terms for backward
+	  compatibility with people who used -h option.  The compatibility
+	  code should be removed after a few months.
+
+2005-12-16  Brian Burton  <brian@burton-computer.com>
+
+	* src/parser/MaildirMailMessageReader.cc (readMessage): Fixed
+	  skipping of hidden files and sorting of files in cur and new.
+
+2005-12-15  Brian Burton  <brian@burton-computer.com>
+
+	* Released as 1.3x3.
+
+	* Added support for maildir directories to all file based commands.
+
+2005-12-13  Brian Burton  <brian@burton-computer.com>
+
+	* src/spamprobe/AbstractMessageCommand.cc (processStream): Improved
+	  auto-purge support to work for both token and mime streams and to
+	  perform a final purge after processing all messages.
+
+	* src/spamprobe/Command_auto_train.cc (execute): Added support for
+	  auto-purge (-P command line option).
+
+2005-12-11  Brian Burton  <brian@burton-computer.com>
+
+	* src/spamprobe/Command_create_config.cc (execute): Added
+	  create-config command to write a new config file based on the
+	  current configuration.
+
+	* src/spamprobe/Command_create_db.cc (execute): Added create-db
+	  command to auto-create a database if none is present.
+
+	* src/spamprobe/spamprobe.cc: Moved code from spamprobe.cc into
+	  separate strategy objects for each supported commands.
+
+	* Added help command to print a list of all available commands
+	  and (optionally) also provide a verbose description of any
+	  named command.
+
+	* Config file is not automatically generated if missing since that
+	  caused some confusion for users who don't use config files.
+
+2005-12-09  Brian Burton  <brian@burton-computer.com>
+
+	* src/includes/Buffer.h (class Buffer): Added assertions and sanity
+	  checks.  Made reset() exception safe.
+
+	* src/spamprobe/SpamFilter.cc (getSortedTokens): Removed use of
+	  qsort().  Now sorting with std::sort().
+
+	* Removed unnecessary uses of NewArray<T>.  Now its only used by
+	  Buffer<T>.
+
+	* Removed old RCPtr<T> in favor of new Ref<T>.  This affected lots
+	  of classes in all modules.
+
+2005-12-02  Brian Burton  <brian@burton-computer.com>
+
+	* Changes below were actually made over the last few weeks but I'm
+	  catching up on previous changes that I hadn't added to
+	  ChangeLog.
+
+	* Fixed include <ostream> that didn't work with older gcc versions.
+
+	* Added preliminary gif parser support using libungif.  configure
+	  attempts to auto-detect libungif id present and uses it to
+	  extract terms from information about any gifs in the message.  I
+	  used gifs first since those seem to be the most common format
+	  used in spams.
+
+	* Added -f command line option.  -d option reloads config file.
+
+	* Moved spamprobe app code into its own directory. Added copyright
+	  notices to hdl source.
+
+	* Restored deleted lock file code.
+
+	* Added DatabaseConfig.
+
+	* Added FilterConfig
+
+	* Now generates config file if none present.
+
+	* Spamprobe has a config file!
+
+	* Added HDL code with validation.
+
+	* Refactored source code into multiple directories and
+	  non-installed libraries for better code structure and
+	  organization.
+
+	* Removed broken (never worked right) BNR code.
+
+	* Removed obsolete data conversion utility left over from version
+	  0.6 upgrade.
+
+2005-06-23  Brian Burton  <brian@burton-computer.com>
+
+	* SimpleTokenizer.cc (isLetterChar): Fixed broken -8 command line
+	  option that was causing 8 bit characters to be treated as word
+	  boundaries.
+
+2005-06-22  Brian Burton  <brian@burton-computer.com>
+
+	* Released version 1.2.
+
+2005-03-29  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (cleanup_database): Added ability to specify
+	  multiple counts and ages for the cleanup command.  This allows
+	  more efficient use of multiple criteria for cleaning the
+	  database.
+
+2005-03-28  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDBImpl_hash.h (class FrequencyDBImpl_hash): Changed
+	  default hash file size to 32 megs.
+
+	* FrequencyDB.cc: SP now defaults to using hash data file format
+	  if neither PBL nor Berkeley DB are available.
+	  (createDB): Now auto-detects database type based on files
+	  in database directory if possible.
+
+	* FrequencyDBImpl_null.h (class FrequencyDBImpl_null): Added
+	  "null" database instance to avoid null pointer issues when
+	  command line arguments are invalid.
+
+	* spamprobe.cc (quick_close): removed code for closing the
+	  database since it created a race condition that could corrupt
+	  memory and crash out in ::delete.
+	  (main): changed usage/version printing again to avoid crashes
+	  when invalid command line used with -V option.
+
+2005-03-26  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDBImpl_hash.cc (initializeHeaderRecords): Added a
+	  header record to hash data files to identify file format and
+	  version.
+
+2005-03-24  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc: Applied usage message/version reporting fix
+	  supplied by Chris Ross.
+
+	* FrequencyDBImpl_split.cc (open): Removed addition of .hash
+	  suffix to hash file name.  The suffix is now added automatically
+	  by the FrequencyDBImpl_hash class.
+
+	* FrequencyDBImpl_hash.cc: Lots of improvements such as hash
+	  collision detection and mitigation (tries next array element).
+	  Factored out hash file code into a new class (HashDataFile).
+	  Added code to rehash the file whenever cleanup is run.  Hash
+	  data file size is now selectable in 1 MB increments instead of
+	  the old use of powers of two.  Actual number of elements in hash
+	  table is now based on a prime number that yields as close to the
+	  target file size as possible.
+
+	* FrequencyDB.cc: Changed hash: db prefix to use a pure hash file
+	  instead of a split file.  Added split: prefix for when that is
+	  more desireable.
+
+2004-11-19  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc: Added verbose mode as a less overwhelming
+	  alternative to existing debug mode.  Using -v once triggers
+	  verbose mode.  Twice triggers debug mode.
+	  (auto_train): Added auto-train command to improve initial
+	  training for new users.
+
+2004-11-13  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDB.cc (class InterruptTest): Attempted to make shutdown
+	  due to user interrupts cleaner by using a guard object in each
+	  method that calls the database.  If an interrupt is requested
+	  during a database operation it will be noted and an exception
+	  thrown after the call completes. Multiple interrupts will fall
+	  back to the default signal handler and shut down the process
+	  more forcefully.
+
+2004-11-12  Brian Burton  <brian@burton-computer.com>
+
+	* README.txt: Fixed -s command line option doc.
+
+	* spamprobe.1: Fixed -s command line option doc.
+
+	* spamprobe.cc (process_mime_stream): Added support for -Y option
+	  to suppress content-length support in mailboxes.
+
+	* MailMessageReader.cc (readMessage): Added support for MIME's
+	  Content-Length header as a way of bypassing embedded From_ lines
+	  inside of a message.  Only supported in outermost headers since
+	  attachment bodies are already delimited using MIME boundaries.
+
+	* MultiLineString.cc (appendToLastLine): Added ability to append
+	  to last line in string.
+
+	* IstreamCharReader.cc (createMark): Added ability to mark
+	  and return when underlying stream is seekable.
+
+	* spamprobe.cc (process_mime_stream): Added support for MBX file
+	  format.  Added support for ignoring From_ line in mbox files.
+
+2004-11-11  Brian Burton  <brian@burton-computer.com>
+
+	* Replaced uses of string::clear() with string::erase().
+
+2004-11-07  Brian Burton  <brian@burton-computer.com>
+
+	* MimeDecoder.cc (decodeHeaderString): Fixed memory bug.
+
+	* Proximity phraser is history.  It never performed well in
+	  experiments anyway.
+
+	* All header terms are now prefixed instead of having some that
+	  did not receive a prefix.
+
+	* Fully integrated new parser and removed code for old parser.
+	  All headers are now run through the MIME decoder since the RFC
+	  says the encoding can apply to more than just Subject.
+
+2004-11-01  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDBImpl_cache.cc; Cache size is now limited to a maximum
+	  number of terms and is automatically flushed when the size is
+	  exceeded.  Uses LRUPtrCache instead of just a map so that the
+	  most recently used terms can be kept in memory instead of being
+	  periodically flushed.
+
+2004-10-31  Brian Burton  <brian@burton-computer.com>
+
+	* Added new email parsing implementation based on the experimental
+	  C# implementation.  This parser does less byte twiddling and
+	  parses most emails in a single pass over the message.  Many of
+	  the old parsing related command line options are not yet enabled
+	  but the standard processing of mbox files and scoring with basic
+	  paramaters is working well.
+
+2004-10-14  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (main): Added exec and exec-shared commands.
+	  (import_words): modified import command to allow negative values
+	  to be specified in the import file.
+
+	* Applied patches for configure.in and aclocal.m4 contributed by
+	  Siggy Brentrup for debian compatibility.
+
+2004-04-24  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDBImpl_pbl.cc: Invokes new WordData methods to allow
+	  storing data in big endian format.
+
+	* WordData.h: Added optional support for storing counts/flags
+	  in big endian order for data portability.
+
+2004-02-05  Brian Burton  <brian@burton-computer.com>
+
+	* MimeLineReader.cc (readMBXFileHeader): UW IMAP MBX file format
+	  is now auto detected from the first line of the mailbox file.
+
+	* spamprobe.cc (process_extended_options): Removed -o imap-mbx
+	  option.
+
+2004-02-04  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (process_extended_options): Added -o imap-mbx
+	  option to process files as WU-IMAP MBX files rather than mbox
+	  files.
+
+	* MimeLineReader.cc (readLine): Added support for WU-IMAP MBX file
+	  format.
+
+2004-02-02  Brian Burton  <brian@burton-computer.com>
+
+	* Released as 0.9h.
+
+2004-01-26  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (process_stream): Added -o tokenized option
+	  to allow people to use an external tokenizer with spamprobe.
+
+2004-01-22  Brian Burton  <brian@burton-computer.com>
+
+	* SpamFilter.cc (scoreToken): Reduced sorting overhead by
+	  pre-computing and integer sort value with sorting priorities
+	  reflected in the value.  This eliminates several calculations
+	  inside of the sort routine.
+
+2004-01-21  Brian Burton  <brian@burton-computer.com>
+
+	* SpamFilter.cc (computeRatio): Capped ratios in calculations to
+	  within MIN_PROB and MAX_PROB.  Widened that range.  This avoids
+	  problems with div/0 and makes it easier to sort terms.
+
+2004-01-20  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (dump_words): dump command can now optionally
+	  accept a regular expression as an argument and will only dump
+	  terms matching the regular expression.
+	  (purge_terms): Added purge-terms command to purge from the
+	  database all terms matching a regular expression.
+
+2004-01-17  Brian Burton  <brian@burton-computer.com>
+
+	* Released as 0.9g2.
+
+	* spamprobe.cc (main): Fixed bug in command line processing.
+	  Thanks to Jem for bug report.
+
+	* Released as 0.9g.
+
+2004-01-16  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (train_on_message): Code simplified.  Eliminated
+	  redundant recalculation of scores.
+	  (train_on_message): Timestamps are now longer updated by
+	  train-spam and train-good commands.  They are still updated by
+	  train command.
+	  (main): Fixed assertion if -P option is specified in a read only
+	  operation.
+
+2004-01-14  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (main): Added -C command line option to allow users
+	  to specify their own min word count.
+
+	* SpamFilter.cc (SpamFilter): Set default minimum word count back
+	  to 5 (was 3).
+
+	* spamprobe.cc (process_extended_options): Removed "alt-score"
+	  from -o options list because it distributes scores poorly.  New
+	  formula achieves the same end with better accuracy.  Added
+	  "orig-score" option to allow people to continue using the old
+	  formula.  Added "honor-xstatus-header" option for people whose
+	  mail server uses X-Status: rather than Status: for the deleted
+	  flag.
+	  (main): Added -l command line option to allow people to set
+	  their own spam threshold if they don't like the default value.
+
+	* SpamFilter.cc (scoreMessage): Added a new scoring formula based
+	  on Paul's but taking the nth root of spam and good probabilities
+	  to produce more evenly distributed scores.  Lowered the spam
+	  threshold to 0.6 to keep accuracy about the same as the original
+	  formula.  Highest score seen for a ham so far in tests is 0.44
+	  so 0.6 seems safe.  Made the new formula the default instead of
+	  Paul's.
+
+2004-01-12  Brian Burton  <brian@burton-computer.com>
+
+	* Released as 0.9f
+	
+	* spamprobe.cc (set_headers): Added -H+name command line option to
+	  allow users to specifically add inidividual headers to the list
+	  of headers to process.
+	  (process_extended_options): Added -o option with graham and
+	  honor-status-header options.
+
+2004-01-09  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (edit_term): Removed validity check from edit term
+	  command since it made it impossible to edit terms from headers.
+	  (dump_message_words): Added "tokenize" command to allow a user
+	  to see all of the terms in a message and their scores.
+
+	* What follows is a collection of changes not added here as they
+	  were made:
+
+	* util.h (num_to_string3): Added function to produce a three digit
+	  zero padded number.
+
+	* spamprobe.cc (train_on_message): Added option to have train mode
+	  try to keep the spam/good counts balanced to minimize skewing
+	  results towards whichever type we've seen the most.
+
+	* SpamFilter.cc (SpamFilter): Improved "extended top terms array"
+	  logic to make the minimum distance from mean for the array
+	  settable by caller of SpamFilter.  Added ability to set a
+	  minimum size for the top terms array.
+
+	* RegularExpression.cc (removeMatch): Added method for removing a
+	  matched substring from the text.
+	  (replaceMatch): Added method for replacing a matched substring
+	  in the text.
+
+	* PhraseBuilder.h (class PhraseBuilder): Added ability to limit
+	  the maximum length of a phrase so that the filter can use more
+	  words per phrase without filling the database (i.e. min 2 and
+	  max 8 words per phrase but limit phrases to max of 20
+	  characters).
+
+	* MessageFactory.cc (addIPAddressTerm): Added a new logical term
+	  for IP addresses found in a message.
+	  (isSuspiciousTag): Added support for processing just
+	  "suspicious" HTML tags (suggested by Paul Graham).
+	  (processUrls): Added special prefix for terms found in URLs.
+	  (addHeadersToMessage): Added support for processing arbitrary
+	  headers.
+
+	* Message.cc (getAllTokensCount): Added AllTokensCount property
+	  (total within document count of all terms).
+
+	* FrequencyDB.h (class FrequencyDB): Added MessageCount property.
+
+2003-09-10  Brian Burton  <brian@burton-computer.com>
+
+        * Released as 0.9e.
+	
+	* spamprobe.cc (print_terms): Changed -T output to include overall
+	  good/spam database counts of each term.
+
+	* SpamFilter.cc (token_qsort_criterion): Modified token sorting
+	  algorithm to improve selection of top terms for scoring.
+	  Changes appear to reduce the chances of false positives.  The
+	  new criteria are: higher distance from mean to 5 decimal places,
+	  higher within document frequency div 3 (to make less selective),
+	  less spammy score, higher count in database, and (final tie
+	  break) alphabetical.  The wdf div helps to make a small
+	  difference in wdf to be less significant.
+
+	* MessageFactory.h (class MessageFactory): Added
+	  useProximityPhraser().
+
+	* ProximityPhraseBuilder.h: Added "proximity" phrase builder that
+	  stores distances between words instead of phrases themselves.
+	  Not nearly as effective as phrases so far.
+
+	* AbstractPhraseBuilder.h: Added abstract super class for
+	  PhraseBuilder to allow plugging in different kinds of phrasers.
+
+2003-09-04  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDBImpl_pbl.cc (sweepOutOldTerms): Changed to commit
+	  based on number of records deleted instead of number of records
+	  scanned.
+	  (getWord): Changed to handle retrieval of current record
+	  properly.
+
+2003-09-03  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDBImpl_pbl.h (class FrequencyDBImpl_pbl): Peter Graf
+	  contributed a patch to switch over to using PBL's key files
+	  instead of ISAM.  This change cuts disk space usage by a factor
+	  of 2 and seems to provide a comparable speed improvement as
+	  well.
+
+2003-09-01  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDBImpl_pbl.cc (beginTransaction): Fixed some broken
+	  assertions.
+
+	* spamprobe.cc (train_test): Added train-test message to
+	  facilitate testing train mode.  Reads a line at a time from
+	  stdin.  Each line contains a message type (spam/good) and a file
+	  name.  SP then reads the file and does a train-spam or
+	  train-good on the message.  Great for quickly building a
+	  database from a lot of known emails using train mode.
+
+	* Released as 0.9d.
+
+	* Fixed configure to remove default -Wno-deprecated.
+
+2003-08-30  Brian Burton  <brian@burton-computer.com>
+
+	* LockFD.h (class LockFD): Changed SHARED to SHARED_LOCK to fix
+	  compile problems on solaris 2.6.  Thanks to Cornell Binder for
+	  bug report.
+
+        * Released as 0.9c.
+
+	* README.txt: Updated for release 0.9c.
+
+2003-08-29  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDBImpl_split.cc (open): Modified to be compatible with
+	  PBL in place of BDB for btree portion of database.
+
+	* FrequencyDBImpl_cache.cc (flush): Performs all writes to it's
+	  impl db using a transaction for safety.  Note that the cache
+	  itself does not support transactions but only utilizes it's
+	  impl's support for them (bug?).
+
+	* FrequencyDB.h (class FrequencyDB): Added beginTransaction() and
+	  endTransaction() methods for impls that support transaction
+	  semantics (currently only PBL). Also added createDB() static
+	  method to allow other classes to create impl dbs without knowing
+	  what type they are creating.
+
+	* FrequencyDBImpl.h (class FrequencyDBImpl): Added
+	  beginTransaction() and endTransaction() empty default
+	  implementations.
+
+	* FrequencyDBImpl_pbl.h (class FrequencyDBImpl_pbl): Added support
+	  for Peter Graf's PBL (The Program Base Library) ISAM database as
+	  an optional replacement for Berkeley DB.  PBL offers transaction
+	  semantics without all of the complicated background processing
+	  of BDB but none of the locking.  Since SP does its own locking
+	  that should be fine.  PBL files appear to be larger than BDB
+	  files by a significant margin.  PBL can be downloaded here:
+	  http://mission.base.com/peter/source/
+
+	* FrequencyDBImpl_bdb.cc (writeWord): Any word with zero counts
+	  can now be deleted on write.  Previously __* terms were kept but
+	  that's not really necessary and this will clear out redundant
+	  empty digests.
+
+	* spamprobe.cc (quick_close): Fixed potential infinite loop when
+	  processing signals.
+
+	* FrequencyDBImpl_bdb.cc: Improved error checking and reporting.
+	  Made use of environment a compile time option controlled by
+	  --enable-cdb passed to configure at build time.
+	  (writeWord): Removed load/compare of existing record to speed
+	  up writes to database except when in debug mode.
+	  (flush): Added call to db->sync() during flush().
+
+2003-08-23  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (process_test_cases): Added some more test cases.
+	  Changed AUTO_PURGE_JUNK_COUNT to 2 instead of 4.
+
+	* SpamFilter.cc (token_qsort_criterion): When selecting top terms
+	  now assigns terms to "bands" of roughly 0.005% rather than
+	  sorting on raw probability.  This helps to prevent almost
+	  equally significant good terms from being overshadowed and
+	  excluded by only slightly more significant spam terms and should
+	  reduce number of false positives.
+
+	* PhraseBuilder.h (class PhraseBuilder): Dynamically resizes
+	  buffer now rather than using a fixed size buffer.  Supports min
+	  as well as max number of words in phrases.
+
+	* MimeMessageReader.cc (unquoteText): Now converts _ to space
+	  in quoted headers (thanks Junior for bug report!).
+
+	* MimeHeader.cc (getFieldName): Added accessor for field names.
+
+	* MessageFactory.cc (setMinPhraseLength): Phrases can now have a
+	  minimum length as well as a maximum length.
+	  (addHeadersToMessage): Improved header processing uses prefixes
+	  for all headers, not just a subset of them.  Better recognition
+	  of ignored headers.
+	  (getHeaderPrefix): Creates a prefix for any header with escaping
+	  of non alphanumeric characters.
+	  (addHeaderToMessage): terms from headers are only stored with
+	  prefixes now instead of both prefixed and unprefixed.
+
+2003-08-13  Brian Burton  <brian@burton-computer.com>
+
+	* MimeMessageReader.cc (unquoteText): Added RFC 1522 support for _
+	  as space in headers.  Thanks jxz.
+
+2003-08-07  Brian Burton  <brian@burton-computer.com>
+
+	* Released as 0.9b.
+
+	* MessageFactory.cc (addHeadersToMessage): Modifed header
+	  processing to decode RFC2047 encoded headers.  Thanks to Junior
+	  for the suggestion!
+
+	* MimeMessageReader.cc (decodeHeader): Added method for decoding
+	  mime encoded headers.
+
+	* FrequencyDBImpl_bdb.cc (open): If berkeley db environment files
+	  cannot be opened but the database is running in read only mode
+	  we carry on without any environment.  This allows shared
+	  database directories to be kept purely read only for users.
+
+	* SpamFilter.cc (lock): locking now removes colon prefixes from
+	  database filenames when creating filename for lock file.  This
+	  is done by nuking up to the last : so it will break windows
+	  paths that include a drive letter.
+
+2003-08-02  Brian Burton  <brian@burton-computer.com>
+
+	* Released as 0.9a.
+
+2003-08-01  Brian Burton  <brian@burton-computer.com>
+
+	* Modified FrequencyDBImpl to accept file mode as an argument and
+	  use that mode when creating database related files.  This allows
+	  shared and private dbs to have different modes.
+
+2003-07-29  Brian Burton  <brian@burton-computer.com>
+
+	* Added rebuilddb to contrib directory.  This script from David
+	  A. Lee automatically rebuilds your .spamprobe directory to
+	  reclaim any space left unused by berkeley db.
+
+2003-07-28  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDBImpl_hash.cc (open): Removed obsolete reference to
+	  MAP_FILE because it broke compilation on solaris 9 systems.
+
+2003-07-27  Brian Burton  <brian@burton-computer.com>
+
+	* Released as 0.9-dev-6.
+
+2003-07-26  Brian Burton  <brian@burton-computer.com>
+
+	* SpamFilter.cc (lock): Global lock file only used for commands
+	  that write to the database.  Using berkeley environment allows
+	  reads to coexist safely with writes.
+
+2003-07-25  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDB.cc (addWord): addWord() preserves flags if word
+	  already in database or sets them to specified value if the word
+	  is new.
+
+	* FrequencyDBImpl_cache.cc (close): no longer flushes
+	  automatically.  This allows SpamFilter to be closed
+	  quickly if necessary.  Caller must now specifically
+	  flush() before closing.
+
+	* SpamFilter.cc (close): SpamFilter now can be closed in flush
+	  mode or "abandon writes mode" so that cleanup code can avoid
+	  writes if the user interrupted the program with ^C or kill.
+
+	* spamprobe.cc (close_on_exit): Added code to close database on
+	  exit to ensure that berkeley db gets a chance to remove its
+	  locks.  Without this using ^C on one process could cause the
+	  next SP process to hang when it tried to write because the
+	  killed procs locks were still in the envronment (db_recover
+	  could be used to clear them but that's a pain).
+	  (import_words): import/export now include flags as well as
+	  counts for each word so that timestamps can be preserved.
+	  (train_on_message): Increased min message count for training
+	  from 500 to 1500 to help ensure sufficient number of messages
+	  for people using train from the beginning.
+
+	* SpamFilter.cc (lock): Added locking code to SpamFilter to ensure
+	  locks are performed uniformly no matter what database is used.
+	  Databases can still perform their own locking if needed.  This
+	  solved the weakness of berkeley db's concurrent data store
+	  locking when performing read-update-write of terms (lack of
+	  write locks while record being updated could cause counts to be
+	  incorrect even though database was not corrupted).
+
+	* spamprobe.cc (main): Added -R option to return 0 if message was
+	  spam and 1 otherwise.  Based on patch from jxz@uol.com.br.
+
+	* FrequencyDBImpl_dbm.h: Removed locking code.  Locks now
+	  at spamprobe.cc level.
+
+2003-07-24  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDBImpl_bdb.cc (open): removed lock file code and
+	  replaced it with use of a berkeley db environment and the
+	  berkeley db concurrent data store to provide more concurrency
+	  and better compatibility with other berkeley db routines.
+
+	* RegularExpression.cc (class RegularExpressionImpl): Fixed (yet
+	  another) regexec() crash bug.  Have to convert 8 bit chars to 7
+	  bit before calling regexec() or it might crash on certain
+	  sequences of 8 bit characters.
+	  
+	* Released as 0.9-dev-5 unstable package.
+
+	* spamprobe.cc (main): Temporarily disabled shared (read only)
+	  locks in commands that used them as experiment to see if it
+	  eliminates database corruption in berkeley db databases.
+
+	* MimeLineReader.cc: Using safe_char() to auto convert non-space
+	  control chars to spaces.
+
+2003-06-29  Brian Burton  <brian@burton-computer.com>
+
+	* Added spamprobe-howto.html to contrib directory.  Thanks to
+   	  Herman Oosthuysen.
+
+	* MessageFactory.cc (assignDigestToMessage): Added getMD5Digest()
+	  call to top of function to fix an assertion thrown when messages
+	  had digests in their headers.
+
+	* spamprobe.cc (main): Added setlocale() call (thanks to Junior
+	  (don't know his name) for the suggestion) to fix tolower()
+	  problems with accented characters in eight bit mode.
+
+	* FrequencyDBImpl_bdb.cc (writeWord): optimized writes to berkeley
+	  db databases.  Deletes records when their counts were going to
+	  be written as zero to make purge 0 unnecessary.
+	  (sweepOutOldTerms): Added code to remove MD5 records if they
+	  have a count of zero.  Removed code that wrote every record back
+	  to the database (left over from mark and sweep days) for better
+	  performance.
+
+2003-05-20  Brian Burton  <brian@galileo.burton-computer.com>
+
+	* spamprobe.cc (main): Cleaned up version printing (-V).
+	  (main): summarize, find-good, and find-spam now print filename if
+	  processing a file instead of stdin.
+
+	* FrequencyDBImpl_bdb.cc (open): Switched back to using a separate
+	  lock file for berkeley db databases to avoid a possible
+	  race condition.
+
+2003-03-14  Brian Burton  <brian@galileo.burton-computer.com>
+
+	* FrequencyDBImpl_cache.cc: Added feedback about whether a term is
+	  from shared db to CacheEntry so that migration can be avoided if
+	  counts don't change.  This prevents terms from moving into the
+	  private database if their time stamp changed but their counts
+	  did not as might happen when running in training mode.
+
+	* FrequencyDBImpl_dual.cc (readWord): Added readWord()
+	  implementation that gives a hint about whether or not the counts
+	  came from the shared database.
+
+2003-03-11  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDBImpl_hash.cc (readWord): Fixed return value to allow
+	  proper operation with shared database.
+
+2003-03-09  Brian Burton  <brian@burton-computer.com>
+
+	* Message.cc (addToken): Removed duplication when adding prefixed terms.
+	  Previously term was added both with and without prefix.  Now only
+	  prefixed form is added.
+
+	* spamprobe.cc (main): Fixed -V option.
+ 	  (train_on_message): Added current score test when training.
+	  train-spam and train-good now use existing digest if any.
+
+2003-03-08  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDBImpl_hash.cc (setSize): Changed from using mod prime to
+	  a bit mask for computing array indexes.  Hash size can be specified
+	  as number of bits in the range 33-63.  Half that number of bits will
+	  be used as a mask.  The doubling allows file size to increase by 
+	  smaller increments than doublings.  The most reasonable hash values
+	  will be in the range 38 (4 MB) - 44 (32 MB).  File sizes in this
+	  range are roughly:
+
+	        size    megabytes   terms
+	         38        4	     512k
+	         39        6	     768k
+	         40        8	    1024k
+	         41       12	    1536k   (default)
+	         42       16	    2048k
+	         43       24	    3072k
+	         44       32        4096k
+
+	* spamprobe.cc (process_stream): Train mode now updates timestamps
+	  of terms in messages that don't need to be classified.  This
+	  prevents terms that are actually being used to score messages
+	  from expiring.
+
+	* FrequencyDB.cc (touchMessage): Added new method to update timestamp
+	  of terms in a message so that train commands can keep terms from
+	  expiring.
+
+2003-03-03  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (process_stream): Added train, train-good, and
+	  train-spam commands for building database with a minimum number
+	  of emails for better performance and less disk usage.
+
+2003-02-28  Brian Burton  <brian@burton-computer.com>
+
+	* MimeMessageReader.cc (readText): Fixed bug that caused rfc822
+	  attachments to be treated as text rather than parsed into their
+	  own mime parts.  As a result base64 encoded attachments in
+	  embedded messages wound up being tokenized rather than decoded
+	  or ignored based on their mimetype.
+
+	* spamprobe.cc (main): Added support for combining multiple test
+	  cases on the command line.  Added counts command to print out
+	  total message counts.
+
+	* SpamFilter.cc: Cleaned up code for computing score to share more
+	  code.  Fixed bug that ignored terms with wdf of 1.  Added
+	  support for wdf to alt1 scoring method.  CHanged spam threshold of
+	  alt1 method.
+
+2003-02-26  Brian Burton  <brian@burton-computer.com>
+
+	* MessageFactory.cc (removeHTMLFromText): Added test for each tag
+	  to determine if it should add a space in its place.  Previously
+	  text like: j<br>u<br>n would be treated as "jun" instead of "j u
+	  n".  Prevents words from being combined if only space tags
+	  separated them.
+
+	* configure.in: Added test for mmap.
+
+	* MessageFactory.cc (addWordToMessage): Fixed bug that did not
+	  prefix word parts in prefixed headers.
+
+	* spamprobe.cc (main): Added Received header to list of headers
+	  stored with a prefix.  First Received header and subsequent ones
+	  stored with different prefix to maybe detect falsified received
+	  headers.  First Received header should generally be more
+	  trustworthy since it comes from your own mail server rather than
+	  from the sending mail server or relay.
+	  (main): Added From header to list of headers stored with prefix
+	  since some spammers seem to use the same from line repeatedly - I
+	  guess they think we trust their "brand".
+
+	* MessageFactory.cc (MessageFactory): Changed minimum word length
+	  to 1.
+
+	* README.txt: Updated readme for -P option.
+
+	* spamprobe.1 (Content-Length): updated manpage for -P option.
+
+	* spamprobe.cc (main): Added -P command line option to automatically
+	  purge terms with total count <= 4 after specified number of messages.
+
+2003-02-07  Brian Burton  <brian@burton-computer.com>
+
+	* Added new FrequencyDBImpl_hash class and made assorted changes
+	  to FrequencyDB and other impl classes to support it.  The hash
+	  impl uses a fixed size array and Bob Jenkin's hash function to
+	  provide an efficient though somewhat inaccurate database.  Based
+	  on the database structure in CRM114's mailfilter program.  The
+	  impl supports all the semantics of the other impls including
+	  cleanup, dump, import, export, etc.
+
+2003-02-06  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDBImpl_bdb.cc (open): Modified berkeley db
+	  implementation to lock the actual database file instead of
+	  creating a separate lock file.  This should work much more
+	  smoothly with shared databases than the lock file did.  Chose
+	  not to use BDB's own locking environment because it seemed hard
+	  to get right and prone to lock ups.
+
+	* LockFD.h (class LockFD): Added LockFD class to handle locking
+	  an arbitrary file descriptor.
+
+	* LockFile.cc (lock): Changed LockFile to use a LockFD object
+	  instead of calling fcntl() directly.
+
+2003-01-30  Brian Burton  <brian@burton-computer.com>
+
+	* Updated version of spamprobe.el from Dave Pearson's web site.
+
+	* Added README-mta-mda-mua.txt graciously contributed by Anto Veldre.
+
+	* MessageFactory.cc (removeHTMLFromText): replaces all whitespace
+	  with space characters to avoid wierd crash in regex routines on
+	  RedHat 8 systems.
+
+2003-01-28  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (main): Added -M option to force a single message
+	  per file (ignores content-length and From).
+
+	* Fixed manpage.
+
+	* Changed lock file mode to 0666 instead of 0600 so that shared
+	  locks will work better.  TODO: need to eliminate the need for
+	  the lock file altogether.
+
+2002-12-29  Brian Burton  <brian@burton-computer.com>
+
+	* MessageFactory.cc (expandCharsInURL): Added decoding of %xx encoded
+	  characters in URLs.  Using this to prevent spammers from slipping
+	  URLs through unchallenged by encoding them completely as hex.
+
+2002-12-26  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (main): SpamProbe now stores words and phrases in
+	  the to, cc, and subject headers both normally and with a special
+	  prefix to improve accuracy since some words are spammier in the
+	  subject than in the message body.
+	  (main): Added -p option to limit number of words per phrase.
+	* Released version 0.8
+
+2002-11-12  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (classify_message): spam and good commands now
+	  count the words from messages multiple times if necessary to
+	  ensure that they are recalled correctly.  receive command does
+	  not do this since it's decisions are not as reliable as manual
+	  ones.  This is intended to improve overall accuracy by
+	  maximizing recall and making it harder for "spams of the future"
+	  to slip through the cracks because of their low word counts.
+
+2002-10-28  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (import_words): Fixed broken import command.
+
+2002-10-27  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (process_stream): Added summarize command to print
+	  find-good style output for every message whether good or spam.
+
+2002-10-26  Brian Burton  <brian@burton-computer.com>
+
+	* MimeMessageReader.cc (readNextHeader): Uses inexact content
+	  length in case the mbox has incorrect content-length values.
+
+	* spamprobe.cc (process_stream): score and receive now print
+	  message digest along with the score.
+	  (main): all commands except receive look for digest in
+	  X-SpamProbe header
+
+	* MessageFactory.cc (assignDigestToMessage): message digest now
+	  taken from header if available.
+
+2002-10-24  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (dump_words): flags now show all 8 digits in dump
+	(process_stream): receive mode supports -T option
+
+2002-10-22  Brian Burton  <brian@burton-computer.com>
+
+	* WordData.h (class WordData): Modified database to store a
+	  16 bit time stamp (days since August 12, 2002) instead of
+	  using sweep count for database cleanup.
+
+2002-10-20  Brian Burton  <brian@burton-computer.com>
+
+	* MessageFactory.cc (addTextToMessage): Removed the to_lower() to
+	  avoid unecessary string copying.  Made regex's case insensitive
+	  so that they are not needed.
+
+	* spamprobe.cc (import_words): Uses regular expression to parse
+	  import lines instead of hard coded logic.
+
+	* configure.in: Added test to verify existence of regex.h on
+	  target system.
+
+	* MimeHeader.cc (isFromLine): Uses regular expression to detect
+	  From lines instead of the hard coded scans.
+
+	* RegularExpression.h (class RegularExpression): Added
+	  RegularExpression class as a front-end for POSIX regular
+	  expression library.
+
+	* MessageFactory.cc: Uses regular expressions instead of hardcoded
+	  logic to detect html tags in pages and find urls inside of tags.
+
+	* README.txt (including): Aded --enable-assert to configure script
+	  so that assertions are off by default but can still be enabled
+	  for debugging purposes.
+
+2002-10-16  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.1: Changed version to just 0.7 so I don't have to keep
+	  it up to date constantly.
+
+	* contrib/spamprobe.el: Updated to latest version of spamprobe.el
+	  Thanks Dave!
+
+	* spamprobe.cc (main): Added --enable-8bit option to configure
+	  script.
+
+2002-10-15  Brian Burton  <brian@burton-computer.com>
+
+	* configure.in (have_database): Moved berkeleydb tests into a
+	  common spot.  Added -ldb3 to the list of libraries to check.
+
+	* Switched to autoconf generated Makefile instead of the manual
+	  one.  The original makefile is now named Makefile.orig.
+
+	* Moved md5 files out of thirdparty and into the top level
+	  directory.
+
+2002-10-14  Brian Burton  <brian@burton-computer.com>
+
+	* countscores.rb (goods): Changed to accomodate change to score
+ 	  output.
+
+	* spamprobe.cc (process_stream): score command prints in same
+	  format as receive command to simplify using it in procmailrc.
+	  (find_message): Prints subject of message to make output more
+	  human understandable.
+
+	* SpamFilter.cc (normalScoreMessage): Fixed NAN bug if inner and
+	  outer both approx. 0.  Returns 0.5 in that case to be safe.
+
+	* spamprobe.cc (main): Added command name validation and support
+	  for shared locks for read only commands.  Moved database lock
+	  acquisition into the FrequencyDBImpl classes.
+
+2002-10-11  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDBImpl_dual.h (class FrequencyDBImpl_dual): Added new
+	  database impl class that uses a shared read only database and a
+	  private read-write one.  Also added -D option to program to
+	  allow user to specify the shared db dir and made numerous
+	  changes to other classes to put this new option into effect.
+
+	* spamprobe.cc (main): Modified to process multiple mboxes much
+	  faster by opening and closing the database only once instead of
+	  once per file.
+
+	* Released SpamProbe-0.7d
+
+	* spamprobe.cc (main): Added purge and edit-term commands.
+
+	* FrequencyDBImpl_bdb.cc (sweepOutJunk): Added purge mode.
+
+2002-10-08  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDB.h (class FrequencyDB, class FrequencyDBImpl*): added
+	  sweepOutJunk method for use by cleanup function.
+
+	* spamprobe.cc (cleanup_database): Added cleanup command to do a
+	  mark and sweep database cleanup.
+
+	* WordData.h (class WordData): Promoted WordData to its own
+	  class so that the cleanup function could be implemented.
+
+2002-10-06  Brian Burton  <brian@burton-computer.com>
+
+	* MimeMessageReader.cc (getMD5Digest): Replaced sprintf call with
+	  hex_digit() util.cc function call.
+
+	* spamprobe.cc (import_words): import and export now use the
+	  encode_string and decode_string functions from util.cc to
+	  properly handle non-printable characters.
+	  (main): Added -X option to rely almost exclusively on terms with
+	  distance from mean >= 0.4 and allow word repeats of 5
+	  (equivalent to -w 5 -r 5 -x)
+
+2002-10-02  Brian Burton  <brian@burton-computer.com>
+
+	* SpamFilter.cc (computeRatio): Fixed bug that returned word score
+	  of 0.5 for messages which had 0 in one count.  Only happened if
+	  corresponding message count was also zero.
+
+	* FrequencyDB.cc: Removed uses of message id as database key.
+
+	* spamprobe.cc (dump_words): spamprobe dump now prints word
+	  probabilities in addition to counts.
+	  (main): Added -x command line option to allow top terms array to
+	  extend past size limit if there are more significant terms than
+	  can fit.
+
+2002-09-20  Brian Burton  <brian@burton-computer.com>
+
+	* SpamFilter.cc (scoreMessage): Relaxed the maximum top terms
+	  array size limit to allow more terms to be used if their
+	  distance from the mean is at least 0.4.  This way emails with
+	  many good and spam words get a more accurate evaluation since
+	  the good terms don't squeeze all of the spammy words out.  Seems
+	  to yield a slight improvement on new, difficult spams without
+	  increasing false positives.
+
+2002-09-19  Brian Burton  <brian@burton-computer.com>
+
+	* NewPtr.h (class NewPtr): Added NewPtr class to use in place of
+	  auto_ptr.  I'd rather follow the standard but some older
+	  versions of g++ came with a broken auto_ptr.
+
+	* FrequencyDBImpl_bdb.cc (open): Added #if condition to handle the
+	  gratuitous api change made by SleepyCat to the open() function.
+
+2002-09-17  Brian Burton  <brian@burton-computer.com>
+
+	* Released 0.7b with better mbox support, domain name break down,
+	  and md5 digests for message identification.
+
+	* spamprobe.cc (import_words): Changed constructor arguments as
+	  suggested by Xavier Nodet to work around problem with MSVC.
+	  (set_headers): Added -H none command line option to ignore
+	  headers when scoring a message.
+
+	* FrequencyDB.cc and lots of other files: Added MD5 digest as
+	  unique identifier for emails instead of using message-id.  For
+	  now message-id is still used if digest not found but eventually
+	  will remove it since digest is better identifier anyway.
+
+2002-09-16  Brian Burton  <brian@burton-computer.com>
+
+	* SpamFilter.cc (scoreMessage): Added code to put top tokens into
+	  the Message object while scoring.
+
+	* Message.h (class Message): Added code to store and retrieve top
+	  tokens.
+
+	* spamprobe.cc (main): Added -T command line option to print
+	  top terms and their score and message count.
+
+	* Tokenizer.cc (is_special_char): Removed ' from special chars
+	  since it seemed to hurt accuracy to include it.
+
+2002-09-15  Brian Burton  <brian@burton-computer.com>
+
+	* MimeMessageReader.cc (readText): Content type is now returned
+	  with each text block so that it can be added to the token list.
+
+2002-09-13  Brian Burton  <brian@burton-computer.com>
+
+	* MimeHeader.cc (isFromLine): Improved mbox reading logic by
+	  incorporating the From line format specification as defined in
+	  the qmail mbox man page.  Tried to be a little flexible for
+	  flawed variations but still strict enough to not think a
+	  sentence starting with From is a new message.
+
+	* MessageFactory.cc (addWordPartsToMessage): Now breaks tokens
+	  containing non-alnums into pieces adding each sub-word plus each
+	  suffix.  This breaks host names down into their host and domain
+	  names.  This seems to improve accurracy.
+
+	* MimeHeader.cc (read): Added extra argument to control whether or
+	  not to allow the header to begin with a From_ line.  This fixes
+	  a bug causing SP to miss some emails in mboxes if the preceeding
+	  email was multipart and did not have a terminator.
+
+	* Released 0.7a with receive mode bug fix, solaris ctype functions
+	  bug fix, and better tokenizer.
+
+2002-09-12  Brian Burton  <brian@burton-computer.com>
+
+	* Tokenizer.h (class Tokenizer): Changed tokenizing of text to
+	  involve less copying.
+
+	* util.h: Added ctype front-end functions to work around problems
+	  on solaris with non-ascii chars.
+
+	* MimeLineReader.cc (readLine): Rewrote loop to make it handle
+	  lines terminated by only CR as well as CR or CRLF.
+
+2002-09-11  Brian Burton  <brian@burton-computer.com>
+
+	* MessageFactory.cc (addStringToMessage): Fixed bug that dropped 8
+	  bit characters when m_replaceNonAsciiChars was false.
+
+	* MimeLineReader.cc (readLine): Converts null bytes into spaces.
+
+	* spamprobe.cc (import_words): Added import command to import
+	  terms previously saved using export command.
+
+2002-09-10  Brian Burton  <brian@burton-computer.com>
+
+	* util.cc (is_all_digits): Added is_all_digits.
+
+	* MessageFactory.cc (addWordToMessage): Fixed all digits token
+	  removal so that IP addresses are added as tokens.
+
+	* MimeMessageReader.cc (readToBoundary): When reading messages
+	  from mboxes now honor content-length fields in the headers
+	  unless -Y option was specified.
+
+	* FrequencyDBImpl_cache.h (class FrequencyDBImpl_cache): Added
+	  is_dirty flag to cache entries so that values that haven't
+	  changed don't get written to the database.
+
+	* spamprobe.cc (main): Added -S command line option to allow
+	  messages per cache flush to be controlled from command line.
+	  Some other code cleanup as well.
+
+	* FrequencyDBImpl_cache.h (class FrequencyDBImpl_cache): Added a
+	  caching proxy frequency db impl class that uses an STL map to
+	  cache term counts to reduce disk i/o at the expense of more cpu
+	  time and memory usage.
+
+	* FrequencyDBImpl.h (class FrequencyDBImpl): Added an abstract
+	  base class for frequency db impls so that I could have a caching
+	  proxy.
+
+	* SpamFilter.cc (token_qsort_criterion): Fixed incorrect sort
+	  order that put spammy words ahead of good words in the tie
+	  breaker.  Also imposed a limit on the term count when sorting
+	  since counts above a certain number become basically identical.
+
+	* FrequencyDB.h (class FrequencyDB): Modified to use an
+	  implementation class for all database access.  This will make it
+	  easier to plug in new ones later.
+
+	* FrequencyDBImpl_bdb.h (class FrequencyDBImpl): Added berkeley db
+	  based implementation class to isolate the rest of the code from
+	  the choice of database.  This version uses btree files instead
+	  of hash for better performance, smaller file sizes, and sorted
+	  output during traversals.
+
+	* FrequencyDBImpl_dbm.h (class FrequencyDBImpl): Added dbm based
+	  implementation class to isolate the rest of the code from the
+	  choice of database.
+
+	* MessageFactory.cc (addWordToMessage): Fixed bug that allowed all
+	  digit tokens to slip in.
+
+2002-09-07  Brian Burton  <brian@burton-computer.com>
+
+	* contrib/README-maildrop.txt: Added Matthias Andree's maildrop
+	  howto to the contrib directory.
+
+	* MimeLineReader.cc (readLine): Fixed to properly handle null
+	  bytes in lines.  Not that those are valid but bugged mailer
+	  sometimes embed them.
+
+2002-09-06  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc: added two new commands: dump and export.
+
+	* SpamFilter.cc: Fixed a memory leak in scoreToken().  Converted
+	  to use only a single FrequencyDB now.  Added an accessor to
+	  allow clients to get access to the db.  Changed comparisons to
+	  zero to allow for inexact floating point differences.
+
+	* FrequencyDB.cc: FrequencyDB modified to store both spam and good
+	  word counts for each word in a single dbm file.  Added a pair of
+	  traveral functions for the export command.
+
+	* util.h: Moved iostream inclusion into util.h.  Also added cctype
+	  include there at Matthias Andree's suggestion for better gcc 3
+	  compatibility.
+
+2002-09-05  Brian Burton  <brian@burton-computer.com>
+
+	* FrequencyDB.h: Added hooks for switching to berkeley db in ndbm
+	  compatibility mode.  GDBM does not scale well for large
+	  databases.  Will continue to use GDBM until 0.7 but will switch
+	  over at that release.
+
+	* util.h: Added using namespace std to avoid problems on modern
+	  C++ compilers.  Thanks to Matthias Andree for bug report.
+
+	* README.txt: Put in fix to procmail recipe.  Thanks to Steven
+ 	  Grimm for bug report.
+
+	* FrequencyDB.cc (removeMessage): Will not attempt to remove a
+	  message which has no message id.
+	  (addMessage): Will not attempt to add a message which has no
+   	  message id.
+
+	* MessageFactory.cc (initMessage): Fixed bug 604808 which caused
+	  messages with no message id to not have their bodies read.
+	  Thanks to Steven Grimm for bug report.
+
+	* MimeMessageReader.cc (readText): Fixed potential bug which could
+	  incorrectly skip part of message body for non-multipart
+	  messages.
+
+	* MessageFactory.cc (addWordToMessage): Allows leading $ in
+	  tokens.  Ignores tokens consisting entirely of digits.
+
+2002-09-03  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (set_headers): Removed obsolete test cases.
+	(process_stream): Added find-spam and find-good commands.
+
+2002-09-02  Brian Burton  <brian@burton-computer.com>
+
+	* Changed the use to string::find() == 0 to use a new inline
+	  function that used strncmp() for greater efficiency.
+
+	* SpamFilter.cc (SpamFilter): Changed default scoring params to
+	  use top 27 words and max of 2 repeats.  Found this to be a good
+	  option based on test runs with sample corpus.
+
+	* spamprobe.cc (set_headers): Added -H command line option to
+	  control which headers are parsed to find tokens.
+
+2002-08-30  Brian Burton  <brian@burton-computer.com>
+
+	* spamprobe.cc (main): Added -h command line option to retain html
+	  tags when generating tokens.
+
+	* MessageFactory.cc (expandEntitiesInHtml): When not removing html
+	  we still expand any entities in the html.
+
+	* SpamFilter.cc (token_qsort_criterion): Modified token sort
+	  criteria to favor good words over spammy ones if their distance
+	  from mean and counts are equal.
+
+	* spamprobe.cc (process_test_case): Removed tune_1 test case.
+
+	* MessageFactory.cc (MessageFactory): Changed default settings for
+	  better spam detection.
+
+	* SpamFilter.cc (SpamFilter): Changed default settings for better
+	  spam detection.
+
+	* MessageFactory.cc (initMessage): Scoring additional headers.
+	  Scoring subject header twice for extra emphasis.
+
+	* MessageFactory.h: Made the scoring parameters setting member
+	  variables.
+
+	* SpamFilter.h: Made the scoring parameters setting member variables.
+
+	* MimeMessageReader.cc (readText): skips junk at end of message in
+	  mime multipart messages.  Previously became confused by the
+	  extra junk and generated spurious scores for some messages which
+	  threw off accuracy.
+
+	* Misc: Added scripts for testing accuracy of results.
+
